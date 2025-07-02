@@ -14,9 +14,16 @@ public class TestController {
 
     @ResponseBody
     @RequestMapping("/test")
+    public String test1(){
+        return "test";
+    }
+
+    @ResponseBody
+    @RequestMapping("/test1")
     public String test(){
         return "test";
     }
+
     @ResponseBody
     @RequestMapping("/javareview1")
     public Map<String, Object> javareview1(){
