@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Board Detail</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+detail <br/>
+id : <input type="number" id="input_id" /> <br/>
+title : <input type="text" id="input_title" /> <br/>
+content : <input type="text" id="input_content" /> <br/>
+author : <input type="text" id="input_author" /> <br/>
+<button onclick="detail_board()">조회하기</button>
+<button onclick="update_board()">수정하기</button>
+<button onclick="delete_board()">삭제하기</button>
+
+<script>
+    function delete_board(){
+        $.ajax({
+            url: '/api/board/delete',
+            method: 'GET',
+            data : {
+                id : $("#input_id").val()
+            },
+            success: function (data, status, xhr) {
+                alert("data : : " + JSON.stringify(data));
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+    function update_board(){
+        $.ajax({
+            url: '/api/board/update',
+            method: 'GET',
+            data : {
+                id : $("#input_id").val()
+                , title : $("#input_title").val()
+                , content : $("#input_content").val()
+                , author : $("#input_author").val()
+            },
+            success: function (data, status, xhr) {
+                alert("data : : " + JSON.stringify(data));
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+    function detail_board(){
+        $.ajax({
+            url: '/api/board/detail/' + $("#input_id").val(),
+            method: 'GET',
+            success: function (data, status, xhr) {
+                alert("data : : " + JSON.stringify(data));
+                let board = data["board"];
+                $("#input_title").val(board.title);
+                $("#input_content").val(board["content"]);
+                $("#input_author").val(board["author"]);
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
