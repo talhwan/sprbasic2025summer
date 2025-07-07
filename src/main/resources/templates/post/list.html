@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Post List</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+list <br/>
+<button onclick="list_post()">조회하기!</button>
+
+<script>
+    function list_post(){
+        $.ajax({
+            url: '/api/post/list',
+            method: 'GET',
+            success: function (data, status, xhr) {
+                alert("data : : " + JSON.stringify(data));
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
