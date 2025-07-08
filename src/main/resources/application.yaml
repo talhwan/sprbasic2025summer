@@ -1,4 +1,32 @@
 spring:
-  application:
-    name: sprbasic2025summer
-
+  datasource:
+    url: jdbc:mysql://localhost:3306/scsprbasic2025summer
+    username: root
+    password: abcd1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+        jdbc:
+          time_zone: Asia/Seoul
+  thymeleaf:
+    cache: false
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+    remote:
+      restart:
+        enabled: false
+  freemarker:
+    cache: false
+  sql:
+    init:
+      mode: always

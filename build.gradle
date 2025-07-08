@@ -23,11 +23,18 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    /* jpa */
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    /* db */
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.2.0'
 
+    /* lombok */
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
