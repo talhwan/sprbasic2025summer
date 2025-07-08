@@ -26,12 +26,12 @@ public class BoardRestController {
         return boardService.update(param);
     }
     @RequestMapping("/delete")
-    public Map<String, Object> delete(@RequestParam int id){
+    public Map<String, Object> delete(@RequestParam long id){
         return boardService.delete(id);
     }
 
     @RequestMapping("/detail/{id}")
-    public Map<String, Object> detail(@PathVariable int id){
+    public Map<String, Object> detail(@PathVariable long id){
         return boardService.detail(id);
     }
     @RequestMapping("/list")
