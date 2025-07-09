@@ -18,11 +18,12 @@ author : <input type="text" id="input_author" /> <br/>
 <script>
     function delete_board(){
         $.ajax({
-            url: '/api/board/delete',
-            method: 'GET',
-            data : {
+            url: '/api/board',
+            method: 'DELETE',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify({
                 id : $("#input_id").val()
-            },
+            }),
             success: function (data, status, xhr) {
                 alert("data : : " + JSON.stringify(data));
             },
@@ -34,14 +35,15 @@ author : <input type="text" id="input_author" /> <br/>
     }
     function update_board(){
         $.ajax({
-            url: '/api/board/update',
-            method: 'GET',
-            data : {
+            url: '/api/board',
+            method: 'PUT',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify({
                 id : $("#input_id").val()
                 , title : $("#input_title").val()
                 , content : $("#input_content").val()
                 , author : $("#input_author").val()
-            },
+            }),
             success: function (data, status, xhr) {
                 alert("data : : " + JSON.stringify(data));
             },

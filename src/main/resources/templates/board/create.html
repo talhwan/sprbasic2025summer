@@ -15,13 +15,14 @@ author : <input type="text" id="input_author" /> <br/>
 <script>
     function create_board(){
         $.ajax({
-            url: '/api/board/create',
-            method: 'GET',
-            data : {
+            url: '/api/board',
+            method: 'POST',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify({
                 title : $("#input_title").val()
                 , content : $("#input_content").val()
                 , author : $("#input_author").val()
-            },
+            }),
             success: function (data, status, xhr) {
                 alert("data : : " + JSON.stringify(data));
             },
