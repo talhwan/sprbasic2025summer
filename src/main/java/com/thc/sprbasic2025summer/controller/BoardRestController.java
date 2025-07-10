@@ -1,9 +1,8 @@
 package com.thc.sprbasic2025summer.controller;
 
-import com.thc.sprbasic2025summer.dto.BoardCreateReqDto;
+import com.thc.sprbasic2025summer.dto.BoardDto;
 import com.thc.sprbasic2025summer.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -16,11 +15,11 @@ public class BoardRestController {
     final BoardService boardService;
 
     @PostMapping("")
-    public Map<String, Object> create(@RequestBody BoardCreateReqDto param){
+    public BoardDto.CreateResDto create(@RequestBody BoardDto.CreateReqDto param){
         return boardService.create(param);
     }
     @PutMapping("")
-    public Map<String, Object> update(@RequestBody Map<String, Object> param){
+    public Map<String, Object> update(@RequestBody BoardDto.UpdateReqDto param){
         return boardService.update(param);
     }
     @DeleteMapping("")

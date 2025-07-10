@@ -2,6 +2,7 @@ package com.thc.sprbasic2025summer.service.impl;
 
 import com.thc.sprbasic2025summer.domain.Board;
 import com.thc.sprbasic2025summer.dto.BoardCreateReqDto;
+import com.thc.sprbasic2025summer.dto.BoardDto;
 import com.thc.sprbasic2025summer.repository.BoardRepository;
 import com.thc.sprbasic2025summer.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -16,27 +17,34 @@ public class BoardServiceImpl implements BoardService {
     final BoardRepository boardRepository;
 
     @Override
-    public Map<String, Object> create(BoardCreateReqDto param) {
+    public BoardDto.CreateResDto create(BoardDto.CreateReqDto param) {
         String title = param.getTitle();
         String content = param.getContent();
         String author = param.getAuthor();
 
         Board board = Board.of(title, content, author);
-        boardRepository.save(board);
+        board = boardRepository.save(board);
 
-        Map<String,Object> map_result = new HashMap<>();
-        map_result.put("code", 200);
-        return map_result;
+        /*
+        1번 방법
+        BoardDto.CreateResDto resDto = new BoardDto.CreateResDto();
+        resDto.setId(board.getId());
+
+        2번 방법
+        BoardDto.CreateResDto resDto =
+                BoardDto.CreateResDto.builder().id(board.getId()).build();
+        */
+        return BoardDto.CreateResDto.builder().id(board.getId()).build();
     }
 
     @Override
-    public Map<String, Object> update(Map<String, Object> param) {
+    public Map<String, Object> update(BoardDto.UpdateReqDto param) {
         int code = 200;
-        long id = Long.parseLong(param.get("id").toString());
+        long id = param.getId();
         Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("no data"));
-        if(param.get("title") != null){ board.setTitle((String) param.get("title")); }
-        if(param.get("content") != null){ board.setContent((String) param.get("content")); }
-        if(param.get("author") != null){ board.setAuthor((String) param.get("author")); }
+        if(param.getTitle() != null){ board.setTitle(param.getTitle()); }
+        if(param.getContent() != null){ board.setContent(param.getContent()); }
+        if(param.getAuthor() != null){ board.setAuthor(param.getAuthor()); }
         boardRepository.save(board);
 
         Map<String,Object> map_result = new HashMap<>();
