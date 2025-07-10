@@ -1,6 +1,7 @@
 package com.thc.sprbasic2025summer.service.impl;
 
 import com.thc.sprbasic2025summer.domain.Board;
+import com.thc.sprbasic2025summer.dto.BoardCreateReqDto;
 import com.thc.sprbasic2025summer.repository.BoardRepository;
 import com.thc.sprbasic2025summer.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,10 @@ public class BoardServiceImpl implements BoardService {
     final BoardRepository boardRepository;
 
     @Override
-    public Map<String, Object> create(Map<String, Object> param) {
-        String title = param.get("title").toString();
-        String content = param.get("content").toString();
-        String author = param.get("author").toString();
+    public Map<String, Object> create(BoardCreateReqDto param) {
+        String title = param.getTitle();
+        String content = param.getContent();
+        String author = param.getAuthor();
 
         Board board = Board.of(title, content, author);
         boardRepository.save(board);

@@ -1,5 +1,6 @@
 package com.thc.sprbasic2025summer.controller;
 
+import com.thc.sprbasic2025summer.dto.BoardCreateReqDto;
 import com.thc.sprbasic2025summer.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class BoardRestController {
     final BoardService boardService;
 
     @PostMapping("")
-    public Map<String, Object> create(@RequestBody Map<String, Object> param){
+    public Map<String, Object> create(@RequestBody BoardCreateReqDto param){
         return boardService.create(param);
     }
     @PutMapping("")
