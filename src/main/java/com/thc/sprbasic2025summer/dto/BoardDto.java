@@ -1,6 +1,8 @@
 package com.thc.sprbasic2025summer.dto;
 
+import com.thc.sprbasic2025summer.domain.Board;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 public class BoardDto {
     @Setter @Getter @Builder
@@ -8,24 +10,21 @@ public class BoardDto {
         String title;
         String content;
         String author;
+
+        public Board toEntity(){
+            return Board.of(getTitle(), getContent(), getAuthor());
+        }
     }
 
-    @Setter @Getter @Builder @NoArgsConstructor @AllArgsConstructor
-    public static class CreateResDto {
-        Long id;
-    }
-
-    @Setter @Getter @Builder
-    public static class UpdateReqDto {
-        Long id; //필수!!
+    @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
+    public static class UpdateReqDto extends DefaultDto.UpdateReqDto {
         String title;
         String content;
         String author;
     }
 
-    @Setter @Getter @Builder @NoArgsConstructor @AllArgsConstructor
-    public static class DetailResDto {
-        Long id;
+    @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
+    public static class DetailResDto extends DefaultDto.DetailResDto {
         String title;
         String content;
         String author;

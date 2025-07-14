@@ -59,7 +59,7 @@ author : <input type="text" id="input_author" /> <br/>
             method: 'GET',
             success: function (data, status, xhr) {
                 alert("data : : " + JSON.stringify(data));
-                let board = data["board"];
+                let board = data;
                 $("#input_title").val(board.title);
                 $("#input_content").val(board["content"]);
                 $("#input_author").val(board["author"]);

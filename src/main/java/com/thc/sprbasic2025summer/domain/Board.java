@@ -1,5 +1,6 @@
 package com.thc.sprbasic2025summer.domain;
 
+import com.thc.sprbasic2025summer.dto.DefaultDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +21,9 @@ public class Board extends AuditingField{
     }
     public static Board of(String title, String content, String author) {
         return new Board(title, content, author);
+    }
+
+    public DefaultDto.CreateResDto toCreateResDto(){
+        return DefaultDto.CreateResDto.builder().id(getId()).build();
     }
 }
