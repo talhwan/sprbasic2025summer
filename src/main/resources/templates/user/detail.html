@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Detail</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+detail <br/>
+id : <input type="number" id="input_id" readonly="readonly"/> <br/>
+deleted : <input type="checkbox" id="input_deleted" /> <br/>
+username : <input type="text" id="input_username" /> <br/>
+name : <input type="text" id="input_name" /> <br/>
+phone : <input type="text" id="input_phone" /> <br/>
+<button onclick="detail_user()">조회하기</button>
+<button onclick="update_user()">수정하기</button>
+<button onclick="delete_user()">삭제하기</button>
+
+<script>
+    function delete_user(){
+        $.ajax({
+            url: '/api/user',
+            method: 'DELETE',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify({
+                id : $("#input_id").val()
+            }),
+            success: function (data, status, xhr) {
+                alert("data : : " + JSON.stringify(data));
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+    function update_user(){
+        $.ajax({
+            url: '/api/user',
+            method: 'PUT',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify({
+                id : $("#input_id").val()
+                , deleted : $("#input_deleted").prop("checked")
+                , name : $("#input_name").val()
+                , phone : $("#input_phone").val()
+            }),
+            success: function (data, status, xhr) {
+                alert("data : : " + JSON.stringify(data));
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+
+    $(function(){
+        let tempHref = location.href;
+        // http://localhost:8080/user/detail/2
+        /*let tempLastIndexOf = tempHref.lastIndexOf("/");
+        tempHref = tempHref.substring(tempLastIndexOf + 1);
+        alert(tempHref);*/
+
+        let tempArray = tempHref.split("/");
+        if(tempArray.length > 0){
+            tempHref = tempArray[tempArray.length -1];
+        }
+
+        tempArray = tempHref.split("?");
+        if(tempArray.length > 0){
+            tempHref = tempArray[0];
+        }
+        //alert(tempHref);
+        $("#input_id").val(tempHref);
+        detail_user();
+    });
+    function detail_user(){
+        $.ajax({
+            url: '/api/user',
+            method: 'GET',
+            data : {
+                id : $("#input_id").val()
+            },
+            success: function (data, status, xhr) {
+                alert("data : : " + JSON.stringify(data));
+                let user = data;
+
+                let tempKeys = Object.keys(user);
+                for(let each of tempKeys){
+                    let tempType = $("#input_" + each).attr("type");
+                    if(tempType === "checkbox"){
+                        $("#input_" + each).prop("checked", user[each]);
+                    } else {
+                        $("#input_" + each).val(user[each]);
+                    }
+                }
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

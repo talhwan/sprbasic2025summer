@@ -4,18 +4,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/board")
+@RequestMapping("/user")
 @Controller
-public class BoardController {
-    /*
-    @RequestMapping("/create")
-    public String create() {
-        return "board/create";
-    }
-    */
-
+public class UserPageController {
     @RequestMapping("/{page}")
     public String page(@PathVariable String page){
-        return "board/"+page;
+        return "user/"+page;
+    }
+    @RequestMapping("/{page}/{id}")
+    public String page2(@PathVariable String page, @PathVariable String id){
+        return "user/"+page;
     }
 }
