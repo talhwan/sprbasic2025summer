@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User List</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+paged list <br/>
+deleted : <input type="checkbox" id="input_deleted"/>
+name : <input type="text" id="input_name"/>
+phone : <input type="text" id="input_phone"/>
+callpage : <input type="number" id="input_callpage"/>
+perpage : <input type="number" id="input_perpage"/>
+<button onclick="list_user()">조회하기!</button>
+
+<div id="div_list">
+</div>
+
+<script>
+    function listener_detail(obj_id){
+        location.href = "/user/detail/" + obj_id;
+    }
+    function list_user(){
+        $.ajax({
+            url: '/api/user/pagedList',
+            method: 'GET',
+            data : {
+                deleted : $("#input_deleted").prop("checked")
+                , name : $("#input_name").val()
+                , phone : $("#input_phone").val()
+                , callpage : $("#input_callpage").val()
+                , perpage : $("#input_perpage").val()
+            },
+            success: function (data, status, xhr) {
+                alert("data : " + JSON.stringify(data));
+                $("#input_callpage").val(data["callpage"]);
+                $("#input_perpage").val(data["perpage"]);
+                $("#div_list").html("");
+                let tempList = data["list"];
+                for(let each of tempList){
+                    $("#div_list").append(
+                        "<div onclick='listener_detail("+each["id"] +")'>" +
+                        + each["id"] + "__" + each["name"]+ "__" + each["phone"]
+                        + "</div>"
+                    );
+                }
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

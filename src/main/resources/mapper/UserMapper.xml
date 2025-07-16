@@ -18,6 +18,28 @@
 		FROM user
 		WHERE user.id is not NULL
 		<if test = "deleted != null">AND user.deleted = #{deleted}</if>
+		<if test = "username != null and username !=''">AND user.username = #{username}</if>
+		<if test = "name != null and name !=''">AND user.name LIKE CONCAT('%', #{name}, '%')</if>
+		<if test = "phone != null and phone !=''">AND user.phone LIKE CONCAT('%', #{phone}, '%')</if>
+	</select>
+
+
+	<select id="pagedList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.UserDto$DetailResDto">
+		SELECT user.id
+		FROM user
+		WHERE user.id is not NULL
+		<if test = "deleted != null">AND user.deleted = #{deleted}</if>
+		<if test = "username != null and username !=''">AND user.username = #{username}</if>
+		<if test = "name != null and name !=''">AND user.name LIKE CONCAT('%', #{name}, '%')</if>
+		<if test = "phone != null and phone !=''">AND user.phone LIKE CONCAT('%', #{phone}, '%')</if>
+		LIMIT #{offset}, #{perpage}
+	</select>
+	<select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+		SELECT count(user.id) as listsize
+		FROM user
+		WHERE user.id is not NULL
+		<if test = "deleted != null">AND user.deleted = #{deleted}</if>
+		<if test = "username != null and username !=''">AND user.username = #{username}</if>
 		<if test = "name != null and name !=''">AND user.name LIKE CONCAT('%', #{name}, '%')</if>
 		<if test = "phone != null and phone !=''">AND user.phone LIKE CONCAT('%', #{phone}, '%')</if>
 	</select>

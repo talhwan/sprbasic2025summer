@@ -33,6 +33,13 @@ public class UserDto {
 
     @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
     public static class ListReqDto extends DefaultDto.ListReqDto {
+        String username;
+        String name;
+        String phone;
+    }
+    @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
+    public static class PagedListReqDto extends DefaultDto.PagedListReqDto {
+        String username;
         String name;
         String phone;
     }
