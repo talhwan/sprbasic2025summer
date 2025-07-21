@@ -12,4 +12,5 @@ public interface UserMapper {
     //페이징 처리를 위한 것
     List<UserDto.DetailResDto> pagedList(UserDto.PagedListReqDto param);
     int pagedListCount(UserDto.PagedListReqDto param);
+    List<UserDto.DetailResDto> scrollList(UserDto.ScrollListReqDto param);
 }

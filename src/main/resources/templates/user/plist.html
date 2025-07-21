@@ -7,17 +7,37 @@
 </head>
 <body>
 paged list <br/>
-deleted : <input type="checkbox" id="input_deleted"/>
-name : <input type="text" id="input_name"/>
-phone : <input type="text" id="input_phone"/>
-callpage : <input type="number" id="input_callpage"/>
-perpage : <input type="number" id="input_perpage"/>
-<button onclick="list_user()">조회하기!</button>
+deleted : <input type="checkbox" id="input_deleted" onchange="list_user()"/>
+name : <input type="text" id="input_name" onchange="list_user()"/>
+phone : <input type="text" id="input_phone" onchange="list_user()"/>
+callpage : <input type="number" id="input_callpage" onchange="list_user()"/>
+perpage : <input type="number" id="input_perpage" onchange="list_user()"/>
+orderby :
+<select id="input_orderby" onchange="list_user()">
+    <option value="id">등록순</option>
+    <option value="name">이름순</option>
+</select>
+orderway :
+<select id="input_orderway" onchange="list_user()">
+    <option value="desc">역방향</option>
+    <option value="asc">정방향</option>
+</select>
+<!--<button onclick="list_user()">조회하기!</button>-->
 
 <div id="div_list">
 </div>
+/////////////////////
+<div id="div_page_list">
+</div>
 
 <script>
+    $(function(){
+        list_user();
+    });
+    function listener_callpage(obj_page){
+        $("#input_callpage").val(obj_page);
+        list_user();
+    }
     function listener_detail(obj_id){
         location.href = "/user/detail/" + obj_id;
     }
@@ -31,12 +51,17 @@ perpage : <input type="number" id="input_perpage"/>
                 , phone : $("#input_phone").val()
                 , callpage : $("#input_callpage").val()
                 , perpage : $("#input_perpage").val()
+                , orderby : $("#input_orderby").val()
+                , orderway : $("#input_orderway").val()
             },
             success: function (data, status, xhr) {
-                alert("data : " + JSON.stringify(data));
-                $("#input_callpage").val(data["callpage"]);
+                //alert("data : " + JSON.stringify(data));
+                let callpage = Number(data["callpage"]);
+                let totalpage = Number(data["totalpage"]);
+                $("#input_callpage").val(callpage);
                 $("#input_perpage").val(data["perpage"]);
                 $("#div_list").html("");
+                $("#div_page_list").html("");
                 let tempList = data["list"];
                 for(let each of tempList){
                     $("#div_list").append(
@@ -45,6 +70,47 @@ perpage : <input type="number" id="input_perpage"/>
                         + "</div>"
                     );
                 }
+
+                //
+                $("#div_page_list").append(
+                    "<a onclick='listener_callpage("+1 +")'>첫페이지</a>"
+                );
+                for(let i=0;i<3;i++){
+                    let tempPage = callpage + i - 3;
+                    if(tempPage > 0){
+                        $("#div_page_list").append(
+                            "<a onclick='listener_callpage("+tempPage +")'> [" +
+                            + tempPage
+                            + "]</a>"
+                        );
+                    }
+                }
+
+                //현재 페이지 추가했음..
+                $("#div_page_list").append(
+                    "<a onclick='listener_callpage("+callpage +")' style='color:red'> [" +
+                    + callpage
+                    + "]</a>"
+                );
+
+                for(let i=0;i<3;i++){
+                    let tempPage = callpage + i + 1;
+                    if(tempPage <= totalpage){
+                        $("#div_page_list").append(
+                            "<a onclick='listener_callpage("+tempPage +")'> [" +
+                            + tempPage
+                            + "]</a>"
+                        );
+                    }
+                }
+
+                $("#div_page_list").append(
+                    "<a onclick='listener_callpage("+totalpage +")'>마지막페이지</a>"
+                );
+
+
+
+
             },
             error: function (data, status, err) {
             },

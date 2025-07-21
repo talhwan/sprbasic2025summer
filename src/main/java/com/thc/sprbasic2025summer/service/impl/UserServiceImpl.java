@@ -57,11 +57,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public List<UserDto.DetailResDto> list(UserDto.ListReqDto param) {
-        List<UserDto.DetailResDto> resultList = new ArrayList<>();
-        List<UserDto.DetailResDto> list = userMapper.list(param);
-        for(UserDto.DetailResDto each : list){
-            resultList.add(get(DefaultDto.DetailReqDto.builder().id(each.getId()).build()));
-        }
+        return addList(userMapper.list(param));
         /*
         List<User> list = userRepository.findAll();
         for(User each : list){
@@ -92,13 +88,23 @@ public class UserServiceImpl implements UserService {
             }
         }
         */
-        return resultList;
+    }
+
+    public List<UserDto.DetailResDto> addList(List<UserDto.DetailResDto> list) {
+        List<UserDto.DetailResDto> returnList = new ArrayList<>();
+        for(UserDto.DetailResDto each : list){
+            returnList.add(get(DefaultDto.DetailReqDto.builder().id(each.getId()).build()));
+        }
+        return returnList;
     }
 
     @Override
     public DefaultDto.PagedListResDto pagedList(UserDto.PagedListReqDto param) {
-        int totalCount = userMapper.pagedListCount(param);
-        //한번에 볼 페이지수 부터 정리!
+        DefaultDto.PagedListResDto res = param.init(userMapper.pagedListCount(param));
+        res.setList(addList(userMapper.pagedList(param)));
+        return res;
+
+        /*//한번에 볼 페이지수 부터 정리!
         int perpage = 10;
         if(param.getPerpage() != null){
             perpage = param.getPerpage();
@@ -131,21 +137,30 @@ public class UserServiceImpl implements UserService {
         int offset = (callpage - 1) *  perpage;
         param.setOffset(offset);
 
-        List<UserDto.DetailResDto> list = userMapper.pagedList(param);
-        List<UserDto.DetailResDto> returnList = new ArrayList<>();
-        for(UserDto.DetailResDto each : list){
-            returnList.add(get(DefaultDto.DetailReqDto.builder().id(each.getId()).build()));
+        //정렬 초기값 설정
+        String orderby = "id";
+        if(param.getOrderby() != null && !param.getOrderby().isEmpty()){
+            orderby = param.getOrderby();
         }
-
-        DefaultDto.PagedListResDto res =
+        param.setOrderby(orderby);
+        String orderway = "desc";
+        if(param.getOrderway() != null && !param.getOrderway().isEmpty()){
+            orderway = param.getOrderway();
+        }
+        param.setOrderway(orderway);*/
+        /*DefaultDto.PagedListResDto res =
         DefaultDto.PagedListResDto.builder()
                 .callpage(callpage)
                 .perpage(perpage)
                 .totalpage(totalPage)
                 .totalcount(totalCount)
                 .list(returnList)
-                .build();
+                .build();*/
+    }
 
-        return res;
+    @Override
+    public List<UserDto.DetailResDto> scrollList(UserDto.ScrollListReqDto param) {
+        param.init();
+        return addList(userMapper.scrollList(param));
     }
 }
