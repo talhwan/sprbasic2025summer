@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.thc.sprbasic2025summer.mapper.UserMapper">
+
+	<select id="username" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.UserDto$DetailResDto">
+		SELECT user.id
+		FROM user
+		WHERE user.username = #{username}
+	</select>
+	<select id="login" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.UserDto$DetailResDto">
+		SELECT user.id
+		FROM user
+		WHERE user.username = #{username}
+		  AND user.password = #{password}
+	</select>
+
 	<!---->
 	<select id="detail" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.UserDto$DetailResDto">
 		SELECT user.id

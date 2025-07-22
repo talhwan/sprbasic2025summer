@@ -2,20 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User Create</title>
+    <title>User LOGIN</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 </head>
 <body>
-create <br/>
+login <br/>
 username(ID) : <input type="text" class="input_param" name="username" id="input_username" /> <br/>
 password : <input type="password" class="input_param" name="password" id="input_password" /> <br/>
-name : <input type="text" class="input_param" name="name" id="input_name" /> <br/>
-phone : <input type="text" class="input_param" name="phone" id="input_phone" /> <br/>
-picture : <input type="file" class="" name="pic" id="input_pic" /> <br/>
-<button onclick="create_user()">입력하기!</button>
+<button onclick="login_user()">로그인하기</button>
 
 <script>
-    function create_user(){
+    function login_user(){
 
         let tempParam = {};
         let input_param = $(".input_param");
@@ -23,12 +20,12 @@ picture : <input type="file" class="" name="pic" id="input_pic" /> <br/>
             tempParam[$(each).attr("name")] = $(each).val();
         }
         $.ajax({
-            url: '/api/user',
+            url: '/api/user/login',
             method: 'POST',
             contentType : 'application/json; charset=utf-8',
             data : JSON.stringify(tempParam),
             success: function (data, status, xhr) {
-                alert("data : : " + JSON.stringify(data));
+                alert("data : " + JSON.stringify(data));
             },
             error: function (data, status, err) {
             },

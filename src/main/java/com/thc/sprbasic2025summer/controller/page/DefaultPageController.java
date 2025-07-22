@@ -1,68 +1,76 @@
 package com.thc.sprbasic2025summer.controller.page;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.*;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.Map;
+
+@RequestMapping("")
 @Controller
 public class DefaultPageController {
 
     //RequestMapping 안에 주소 값은 배열도 가능합니다!!
-    @RequestMapping({"", "/", "/index"})
+    @GetMapping({"", "/", "/index"})
     public String index(){
         return "index";
     }
-    /*
-    @RequestMapping("/")
-    public String index2(){
-        return "index";
-    }
-    @RequestMapping("/index")
-    public String index3(){
-        return "index";
-    }*/
 
-    @RequestMapping("/aaa")
-    public String aaa(@RequestParam String name, String phone, Model model){
-        System.out.println("name : " + name);
-        System.out.println("phone : " + phone);
-        model.addAttribute("name", name);
-        model.addAttribute("phone", "phone");
-        return "aaa";
+    @GetMapping("/{page}")
+    public String page(@PathVariable String page){
+        return page;
     }
 
-    // 두개의 숫자를 입력받아, 더해주는 페이지 컨트롤러 만들기.
-    // 더한 결과를 모델에 담아서, 페이지에서 값을 확인하도록 한다.
-    @RequestMapping("/calculate")
-    public String calculate(String num1, String num2, Model model){
-        System.out.println("num1 : " + num1);
-        System.out.println("num2 : " + num2);
-        int int_num1 = Integer.parseInt(num1);
-        int int_num2 = Integer.parseInt(num2);
-        int sum = int_num1 + int_num2;
-
-        model.addAttribute("sum", sum);
-        return "calculate";
+    @ResponseBody
+    @RequestMapping(value = "/image/{file:.+}", method = {RequestMethod.GET,RequestMethod.POST})
+    public byte[] getImage(@PathVariable("file") String file, HttpServletRequest request) throws Exception {
+        byte[] return_byte = null;
+        //해당 이미지를 byte[]형태로 반환
+        File tempFile = new File("C:/workspace/uploadfiles/sprbasic2025summer/" + file);
+        InputStream in = null;
+        try {
+            in = new FileInputStream(tempFile);
+            return_byte = IOUtils.toByteArray(in);
+        } catch (FileNotFoundException e) {
+            //e.printStackTrace();
+        } catch (IOException e) {
+            //e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+        return return_byte;
     }
-    @RequestMapping("/calculate2")
-    public String calculate2(int num1, int num2, Model model){
-        int sum = num1 + num2;
-        model.addAttribute("sum", sum);
-        /*
-        Map<String, Object> temp = new HashMap<String, Object>();
-        temp.put("sum", sum);
-        temp.put("code", "success");
-        model.addAttribute("result", temp);
-        */
-        return "calculate";
-    }
+    @ResponseBody
+    @RequestMapping(value = "/download/{file:.+}", method = RequestMethod.GET)
+    public void download(@PathVariable("file") String file, @RequestParam Map<String, Object> map, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        File tempFile = new File("C:/workspace/uploadfiles/sprbasic2025summer/" + file);
+        String fileName = URLEncoder.encode(tempFile.getName(), "utf-8");
+        fileName = fileName.substring(fileName.indexOf("_") + 1);
 
-    @RequestMapping("/multiple")
-    public String multiple(int num1, int num2, Model model){
-        int result = num1 * num2;
-        model.addAttribute("result", result);
-        return "multiple";
+
+        //여기는 response 에 설정해주는 부분인데, 어려우면 당분간은 패쓰!!
+        String mimeType= URLConnection.guessContentTypeFromName(file);		//--- 파일의 mime타입을 확인합니다.
+        if(mimeType==null){			//--- 마임타입이 없을 경우 application/octet-stream으로 설정합니다.
+            mimeType = "application/octet-stream";
+        }
+        response.setContentType(mimeType);	//--- response에 mimetype을 설정합니다.
+        response.setContentLength((int) tempFile.length());
+        response.setHeader("Content-Disposition", "attachment; filename=\""+ fileName +"\"");
+        //
+
+        InputStream inputStream = new BufferedInputStream(new FileInputStream(tempFile));	//--- inputstream 객체를 얻습니다.
+        FileCopyUtils.copy(inputStream, response.getOutputStream());		//--- inputstream으로 파일을 읽고 outputsream으로 파일을 씁니다.
     }
 
 }

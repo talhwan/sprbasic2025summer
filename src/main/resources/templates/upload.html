@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+upload <br/>
+file : <input type="file" class="input_param" name="file" id="input_file" /> <br/>
+
+<img id="img_upload" />
+<a id="a_upload">다운로드받아보기</a>
+
+<button onclick="upload_file()">업로드하기!</button>
+
+<script>
+    function upload_file(){
+        let tempFile = null;
+        let inputFile = document.getElementById('input_file');
+        if (inputFile.files.length > 0) {
+            tempFile = inputFile.files[0];
+        }
+
+        let fileData = new FormData();
+        fileData.append("file", tempFile);
+
+        $.ajax({
+            url: "/api/default/upload",
+            type: "POST",
+            data: fileData ,
+            cache : false,
+            contentType : false,
+            processData : false,
+            success: (data, status, xhr)=>{
+                alert(data);
+                $("#img_upload").attr("src", "/image/" + data);
+                $("#a_upload").attr("href", "/download/" + data);
+            },
+            error: (data)=>{
+                alert("error")
+            },
+        });
+    }
+</script>
+
+</body>
+</html>

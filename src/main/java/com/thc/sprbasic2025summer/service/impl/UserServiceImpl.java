@@ -20,7 +20,33 @@ public class UserServiceImpl implements UserService {
     final UserMapper userMapper;
 
     @Override
+    public UserDto.LoginResDto login(UserDto.LoginReqDto param) {
+        //1번 방법
+        User user = userRepository.findByUsernameAndPassword(param.getUsername(), param.getPassword());
+        return UserDto.LoginResDto.builder().done(user != null).build();
+        /*
+        //2번 방법!
+        return UserDto.LoginResDto.builder().done(userMapper.login(param) != null).build();
+        */
+    }
+
+    /**/
+
+    @Override
     public DefaultDto.CreateResDto create(UserDto.CreateReqDto param) {
+        //혹시 아이디 중복인지 확인해줘..
+        // 1번 방법
+        User user = userRepository.findByUsername(param.getUsername());
+        if(user != null){
+            throw new RuntimeException("already exist");
+        }
+        /*
+        //2번 방법
+        UserDto.DetailResDto res = userMapper.username(UserDto.LoginReqDto.builder().username(param.getUsername()).build());
+        if(res != null){
+            throw new RuntimeException("already exist");
+        }
+        */
         return userRepository.save(param.toEntity()).toCreateResDto();
     }
 

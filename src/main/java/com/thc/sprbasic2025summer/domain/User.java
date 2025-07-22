@@ -1,6 +1,7 @@
 package com.thc.sprbasic2025summer.domain;
 
 import com.thc.sprbasic2025summer.dto.DefaultDto;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Entity
 public class User extends AuditingField{
+    @Column(unique = true, nullable = false)
     String username; // 아이디 기능!
     String password; // 비밀번호!!
     String name;
