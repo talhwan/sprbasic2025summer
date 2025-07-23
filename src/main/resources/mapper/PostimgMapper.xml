@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thc.sprbasic2025summer.mapper.PostimgMapper">
+
+	<!---->
+	<select id="detail" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostimgDto$DetailResDto">
+		SELECT postimg.id
+			, postimg.deleted
+		 	, postimg.created_at as createdAt
+		 	, postimg.modified_at as modifiedAt
+
+		    , postimg.post_id as postId
+			, postimg.img
+		FROM postimg
+		WHERE postimg.id = #{id}
+	</select>
+
+	<sql id="commonWhere">
+		WHERE postimg.id is not NULL
+		<if test = "deleted != null">AND postimg.deleted = #{deleted}</if>
+		<if test = "postId != null and postId !=''">AND postimg.post_id = #{postId}</if>
+	</sql>
+
+	<select id="list" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostimgDto$DetailResDto">
+		SELECT postimg.id
+		FROM postimg
+		<include refid="commonWhere"/>
+	</select>
+
+
+	<select id="pagedList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostimgDto$DetailResDto">
+		SELECT postimg.id
+		FROM postimg
+		<include refid="commonWhere"/>
+		ORDER BY
+		<if test = "orderby != null and orderby =='id'">postimg.id</if>
+		<if test = "orderby != null and orderby =='title'">postimg.title</if>
+		<if test = "orderway != null and orderway =='desc'"> DESC</if>
+		<if test = "orderway != null and orderway =='asc'"> ASC</if>
+		LIMIT #{offset}, #{perpage}
+	</select>
+	<select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+		SELECT count(postimg.id) as listsize
+		FROM postimg
+		<include refid="commonWhere"/>
+	</select>
+
+	<select id="scrollList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostimgDto$DetailResDto">
+		SELECT postimg.id
+		FROM postimg
+		<include refid="commonWhere"/>
+
+		<if test = "orderway != null and orderway =='desc'">
+			<if test = "cursor != null and cursor !=''">AND #{cursor} > postimg.id </if>
+			ORDER BY postimg.id DESC
+		</if>
+		<if test = "orderway != null and orderway =='asc'">
+			<if test = "cursor != null and cursor !=''">AND postimg.id > #{cursor}</if>
+			ORDER BY postimg.id ASC
+		</if>
+		LIMIT 0, #{perpage}
+	</select>
+</mapper>

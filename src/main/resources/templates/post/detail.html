@@ -7,40 +7,28 @@
 </head>
 <body>
 detail <br/>
-id : <input type="number" id="input_id" /> <br/>
+id : <input type="number" id="input_id" readonly="readonly"/> <br/>
+deleted : <input type="checkbox" id="input_deleted" /> <br/>
+userId : <input type="text" id="input_userId" /> <br/>
 title : <input type="text" id="input_title" /> <br/>
 content : <input type="text" id="input_content" /> <br/>
-author : <input type="text" id="input_author" /> <br/>
+img : <input type="text" id="input_img" /> <br/>
+<img id="image_img" style="height: 100px"/><br/>
+imgs :
+<div id="div_imgs"></div><br/>
 <button onclick="detail_post()">조회하기</button>
 <button onclick="update_post()">수정하기</button>
 <button onclick="delete_post()">삭제하기</button>
 
 <script>
-    let location_href = location.href;
-    //alert(location_href);
-
-    let arrayHref = location_href.split("/");
-    let tempId = arrayHref[arrayHref.length - 1];
-    //alert(tempId);
-
-    if(tempId.includes("?")){
-        let arrayId = tempId.split("?");
-        tempId = arrayId[0];
-    }
-    //alert(tempId);
-    $( document ).ready(function() {
-        $("#input_id").val(tempId);
-        detail_post();
-    });
-
-
     function delete_post(){
         $.ajax({
-            url: '/api/post/delete',
-            method: 'GET',
-            data : {
+            url: '/api/post',
+            method: 'DELETE',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify({
                 id : $("#input_id").val()
-            },
+            }),
             success: function (data, status, xhr) {
                 alert("data : : " + JSON.stringify(data));
             },
@@ -52,14 +40,15 @@ author : <input type="text" id="input_author" /> <br/>
     }
     function update_post(){
         $.ajax({
-            url: '/api/post/update',
-            method: 'GET',
-            data : {
+            url: '/api/post',
+            method: 'PUT',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify({
                 id : $("#input_id").val()
+                , deleted : $("#input_deleted").prop("checked")
                 , title : $("#input_title").val()
                 , content : $("#input_content").val()
-                , author : $("#input_author").val()
-            },
+            }),
             success: function (data, status, xhr) {
                 alert("data : : " + JSON.stringify(data));
             },
@@ -69,16 +58,49 @@ author : <input type="text" id="input_author" /> <br/>
             }
         });
     }
+
+    $(function(){
+        let tempHref = location.href;
+        let tempArray = tempHref.split("/");
+        if(tempArray.length > 0){
+            tempHref = tempArray[tempArray.length -1];
+        }
+        tempArray = tempHref.split("?");
+        if(tempArray.length > 0){
+            tempHref = tempArray[0];
+        }
+        $("#input_id").val(tempHref);
+        detail_post();
+    });
     function detail_post(){
         $.ajax({
-            url: '/api/post/detail/' + $("#input_id").val(),
+            url: '/api/post',
             method: 'GET',
+            data : {
+                id : $("#input_id").val()
+            },
             success: function (data, status, xhr) {
-                alert("data :" + JSON.stringify(data));
+                alert("data : : " + JSON.stringify(data));
                 let post = data;
-                $("#input_title").val(post.title);
-                $("#input_content").val(post["content"]);
-                $("#input_author").val(post["author"]);
+
+                let tempKeys = Object.keys(post);
+                for(let each of tempKeys){
+                    let tempType = $("#input_" + each).attr("type");
+                    if(tempType === "checkbox"){
+                        $("#input_" + each).prop("checked", post[each]);
+                    } else {
+                        $("#input_" + each).val(post[each]);
+                    }
+                }
+
+                $("#image_img").attr("src", post["img"]);
+
+                let imgs = post["imgs"];
+                for(let each of imgs) {
+                    $("#div_imgs").append(
+                    '<img src="'+each["img"]+'" style="height: 100px"/> <br/>'
+                    );
+                }
             },
             error: function (data, status, err) {
             },

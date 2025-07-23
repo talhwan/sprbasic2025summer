@@ -25,7 +25,14 @@ password : <input type="password" class="input_param" name="password" id="input_
             contentType : 'application/json; charset=utf-8',
             data : JSON.stringify(tempParam),
             success: function (data, status, xhr) {
-                alert("data : " + JSON.stringify(data));
+                //alert("data : " + JSON.stringify(data));
+                let userId = data["id"];
+                if(userId == null || userId === ""){
+                    alert("로그인 실패");
+                } else {
+                    localStorage.setItem("userId", userId);
+                    alert("로그인 성공!");
+                }
             },
             error: function (data, status, err) {
             },

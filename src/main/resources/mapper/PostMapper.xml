@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thc.sprbasic2025summer.mapper.PostMapper">
+
+	<!---->
+	<select id="detail" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostDto$DetailResDto">
+		SELECT post.id
+			, post.deleted
+		 	, post.created_at as createdAt
+		 	, post.modified_at as modifiedAt
+
+		    , post.user_id as userId
+			, post.title
+			, post.content
+			, post.img
+
+			, user.username as userUsername
+			, user.name as userName
+		FROM post, user
+		WHERE post.id = #{id}
+		  AND post.user_id = user.id
+	</select>
+
+	<sql id="commonWhere">
+		WHERE post.id is not NULL
+		<if test = "deleted != null">AND post.deleted = #{deleted}</if>
+		<if test = "userId != null and userId !=''">AND post.user_id = #{userId}</if>
+		<if test = "title != null and title !=''">AND post.title LIKE CONCAT('%', #{title}, '%')</if>
+	</sql>
+
+	<select id="list" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostDto$DetailResDto">
+		SELECT post.id
+		FROM post
+		<include refid="commonWhere"/>
+	</select>
+
+
+	<select id="pagedList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostDto$DetailResDto">
+		SELECT post.id
+		FROM post
+		<include refid="commonWhere"/>
+		ORDER BY
+		<if test = "orderby != null and orderby =='id'">post.id</if>
+		<if test = "orderby != null and orderby =='title'">post.title</if>
+		<if test = "orderway != null and orderway =='desc'"> DESC</if>
+		<if test = "orderway != null and orderway =='asc'"> ASC</if>
+		LIMIT #{offset}, #{perpage}
+	</select>
+	<select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+		SELECT count(post.id) as listsize
+		FROM post
+		<include refid="commonWhere"/>
+	</select>
+
+	<select id="scrollList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostDto$DetailResDto">
+		SELECT post.id
+		FROM post
+		<include refid="commonWhere"/>
+
+		<if test = "orderway != null and orderway =='desc'">
+			<if test = "cursor != null and cursor !=''">AND #{cursor} > post.id </if>
+			ORDER BY post.id DESC
+		</if>
+		<if test = "orderway != null and orderway =='asc'">
+			<if test = "cursor != null and cursor !=''">AND post.id > #{cursor}</if>
+			ORDER BY post.id ASC
+		</if>
+		LIMIT 0, #{perpage}
+	</select>
+</mapper>

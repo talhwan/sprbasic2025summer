@@ -7,21 +7,100 @@
 </head>
 <body>
 create <br/>
-title : <input type="text" id="input_title" /> <br/>
-content : <input type="text" id="input_content" /> <br/>
-author : <input type="text" id="input_author" /> <br/>
+userId : <input type="text" class="input_param" name="userId" id="input_userId" /> <br/>
+title : <input type="text" class="input_param" name="title" id="input_title" /> <br/>
+content : <input type="text" class="input_param" name="content" id="input_content" /> <br/>
+img : <input type="text" class="input_param" name="img" id="input_img" /> <br/>
+main img : <input type="file" id="input_file" onchange="upload_file()" accept="image/*" /> <br/>
+
+imgs :
+<div id="div_imgs"></div>
+<br/>
+for imgs : <input type="file" id="input_files" onchange="upload_files()" accept="image/*" /> <br/>
+
 <button onclick="create_post()">입력하기!</button>
 
 <script>
-    function create_post(){
+    function upload_files(){
+        let tempFile = null;
+        let inputFile = document.getElementById('input_files');
+        if (inputFile.files.length > 0) {
+            tempFile = inputFile.files[0];
+        }
+        let fileData = new FormData();
+        fileData.append("file", tempFile);
+
         $.ajax({
-            url: '/api/post/create',
-            method: 'GET',
-            data : {
-                title : $("#input_title").val()
-                , content : $("#input_content").val()
-                , author : $("#input_author").val()
+            url: "/api/default/upload",
+            type: "POST",
+            data: fileData ,
+            cache : false,
+            contentType : false,
+            processData : false,
+            success: (data, status, xhr)=>{
+                //alert(data);
+                $("#div_imgs").append(
+                    '<input type="text" class="input_imgs" value="/image/'+data+'" />'
+                );
             },
+            error: (data)=>{
+                alert("error")
+            },
+        });
+    }
+    function upload_file(){
+        let tempFile = null;
+        let inputFile = document.getElementById('input_file');
+        if (inputFile.files.length > 0) {
+            tempFile = inputFile.files[0];
+        }
+        let fileData = new FormData();
+        fileData.append("file", tempFile);
+
+        $.ajax({
+            url: "/api/default/upload",
+            type: "POST",
+            data: fileData ,
+            cache : false,
+            contentType : false,
+            processData : false,
+            success: (data, status, xhr)=>{
+                //alert(data);
+                $("#input_img").val("/image/" + data);
+            },
+            error: (data)=>{
+                alert("error")
+            },
+        });
+    }
+
+    function create_post(){
+
+        let userId = localStorage.getItem("userId");
+        if(userId == null || userId === ""){
+            alert("로그인 먼저 해주세요!");
+            location.href = "/user/login";
+            return false;
+        }
+        $("#input_userId").val(userId);
+
+        let tempParam = {};
+        let input_param = $(".input_param");
+        for(let each of input_param){
+            tempParam[$(each).attr("name")] = $(each).val();
+        }
+        let input_imgs = $(".input_imgs");
+        let imgs = [];
+        for(let each of input_imgs){
+            imgs.push($(each).val());
+        }
+        tempParam["imgs"] = imgs;
+
+        $.ajax({
+            url: '/api/post',
+            method: 'POST',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify(tempParam),
             success: function (data, status, xhr) {
                 alert("data : : " + JSON.stringify(data));
             },
