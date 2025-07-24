@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>Post Detail</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <style>
+        .hide{
+            display: none;
+        }
+    </style>
 </head>
 <body>
 detail <br/>
@@ -13,14 +18,60 @@ userId : <input type="text" id="input_userId" /> <br/>
 title : <input type="text" id="input_title" /> <br/>
 content : <input type="text" id="input_content" /> <br/>
 img : <input type="text" id="input_img" /> <br/>
+countlike : <input type="number" id="input_countlike"/> <br/>
+liked : <input type="checkbox" id="checkbox_liked"  onchange="toggle_postlike()"/> <br/>
 <img id="image_img" style="height: 100px"/><br/>
 imgs :
 <div id="div_imgs"></div><br/>
 <button onclick="detail_post()">조회하기</button>
-<button onclick="update_post()">수정하기</button>
-<button onclick="delete_post()">삭제하기</button>
+<!--<button onclick="toggle_postlike()">좋아요!</button>-->
+<button onclick="update_post()" id="btn_update" class="hide btn_mine">수정하기</button>
+<button onclick="delete_post()" id="btn_delete" class="hide btn_mine">삭제하기</button>
 
 <script>
+    let userId = localStorage.getItem("userId");
+
+    function watch_postlike(){
+        $.ajax({
+            url: '/api/postlike/watch',
+            method: 'GET',
+            contentType : 'application/json; charset=utf-8',
+            data : {
+                userId : userId,
+                postId : $("#input_id").val()
+            },
+            success: function (data, status, xhr) {
+                //alert("data : " + JSON.stringify(data));
+                $("#checkbox_liked").prop("checked", data["isLiked"]);
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+    function toggle_postlike(){
+        let checkbox_liked = $("#checkbox_liked").prop("checked");
+        $.ajax({
+            url: '/api/postlike/toggle',
+            method: 'POST',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify({
+                userId : userId,
+                postId : $("#input_id").val(),
+                like : checkbox_liked
+            }),
+            success: function (data, status, xhr) {
+                //alert("data : " + JSON.stringify(data));
+                let countlike = data["countlike"];
+                $("#input_countlike").val(countlike);
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
     function delete_post(){
         $.ajax({
             url: '/api/post',
@@ -80,8 +131,15 @@ imgs :
                 id : $("#input_id").val()
             },
             success: function (data, status, xhr) {
-                alert("data : : " + JSON.stringify(data));
+                //alert("data : : " + JSON.stringify(data));
                 let post = data;
+
+                let nowUserId = post["userId"];
+                //alert(nowUserId);
+                if(userId + "" === nowUserId + ""){
+                    //alert("내 글인데요!!");
+                    $(".btn_mine").removeClass("hide");
+                }
 
                 let tempKeys = Object.keys(post);
                 for(let each of tempKeys){
@@ -101,6 +159,9 @@ imgs :
                     '<img src="'+each["img"]+'" style="height: 100px"/> <br/>'
                     );
                 }
+
+                //좋아요 했는지 여부 확인!
+                watch_postlike();
             },
             error: function (data, status, err) {
             },

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thc.sprbasic2025summer.mapper.PostlikeMapper">
+
+	<!---->
+	<select id="detail" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostlikeDto$DetailResDto">
+		SELECT postlike.id
+			, postlike.deleted
+		 	, postlike.created_at as createdAt
+		 	, postlike.modified_at as modifiedAt
+
+		    , postlike.post_id as postId
+			, postlike.img
+		FROM postlike
+		WHERE postlike.id = #{id}
+	</select>
+
+	<sql id="commonWhere">
+		WHERE postlike.id is not NULL
+		<if test = "deleted != null">AND postlike.deleted = #{deleted}</if>
+		<if test = "postId != null and postId !=''">AND postlike.post_id = #{postId}</if>
+	</sql>
+
+	<select id="list" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostlikeDto$DetailResDto">
+		SELECT postlike.id
+		FROM postlike
+		<include refid="commonWhere"/>
+	</select>
+
+
+	<select id="pagedList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostlikeDto$DetailResDto">
+		SELECT postlike.id
+		FROM postlike
+		<include refid="commonWhere"/>
+		ORDER BY
+		<if test = "orderby != null and orderby =='id'">postlike.id</if>
+		<if test = "orderby != null and orderby =='title'">postlike.title</if>
+		<if test = "orderway != null and orderway =='desc'"> DESC</if>
+		<if test = "orderway != null and orderway =='asc'"> ASC</if>
+		LIMIT #{offset}, #{perpage}
+	</select>
+	<select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+		SELECT count(postlike.id) as listsize
+		FROM postlike
+		<include refid="commonWhere"/>
+	</select>
+
+	<select id="scrollList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.PostlikeDto$DetailResDto">
+		SELECT postlike.id
+		FROM postlike
+		<include refid="commonWhere"/>
+
+		<if test = "orderway != null and orderway =='desc'">
+			<if test = "cursor != null and cursor !=''">AND #{cursor} > postlike.id </if>
+			ORDER BY postlike.id DESC
+		</if>
+		<if test = "orderway != null and orderway =='asc'">
+			<if test = "cursor != null and cursor !=''">AND postlike.id > #{cursor}</if>
+			ORDER BY postlike.id ASC
+		</if>
+		LIMIT 0, #{perpage}
+	</select>
+</mapper>

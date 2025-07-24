@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chattalk List</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+scroll list <br/>
+deleted : <input type="checkbox" id="input_deleted" onchange="listener_changed()"/>
+title : <input type="text" id="input_title" onchange="listener_changed()"/>
+perpage : <input type="number" id="input_perpage" onchange="listener_changed()"/>
+orderway :
+<select id="input_orderway" onchange="listener_changed()">
+    <option value="desc">역방향</option>
+    <option value="asc">정방향</option>
+</select>
+<button onclick="list_chattalk()">더보기</button>
+<input id="input_content" />
+<button onclick="create_chattalk()">대화 하기</button>
+
+<div id="div_list">
+</div>
+
+<script>
+
+    let tempHref = location.href;
+    let tempArray = tempHref.split("/");
+    if(tempArray.length > 0){
+        tempHref = tempArray[tempArray.length -1];
+    }
+    tempArray = tempHref.split("?");
+    if(tempArray.length > 0){
+        tempHref = tempArray[0];
+    }
+    //$("#input_id").val(tempHref);
+
+    function create_chattalk(){
+        let tempParam = {
+            chatuserId: tempHref,
+            content: $("#input_content").val()
+        };
+        $.ajax({
+            url: '/api/chattalk',
+            method: 'POST',
+            contentType : 'application/json; charset=utf-8',
+            data : JSON.stringify(tempParam),
+            success: function (data, status, xhr) {
+                alert("data : : " + JSON.stringify(data));
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+
+    $(function(){
+        //list_chattalk();
+    });
+    function listener_changed(){
+        $("#div_list").html("");
+        list_chattalk();
+    }
+    function listener_detail(obj_id){
+        location.href = "/chat/udetail/" + obj_id;
+    }
+    function list_chattalk(){
+        let cursor = null;
+        let input_cursor_id = $(".input_cursor_id");
+        if(input_cursor_id.length > 0){
+            cursor = $(input_cursor_id[input_cursor_id.length - 1]).val();
+        }
+
+        $.ajax({
+            url: '/api/chattalk/scrollList',
+            method: 'GET',
+            data : {
+                deleted : $("#input_deleted").prop("checked")
+                , cursor : cursor
+                , perpage : $("#input_perpage").val()
+                , orderway : $("#input_orderway").val()
+
+                , myChatuserId : tempHref
+                , title : $("#input_title").val()
+            },
+            success: function (data, status, xhr) {
+                //alert("data : " + JSON.stringify(data));
+                let tempList = data;
+                for(let each of tempList){
+                    $("#div_list").append(
+                        "<div onclick='listener_detail("+each["id"] +")'>" +
+                        + each["id"] + "__" + each["userId"]+ "__" + each["content"]
+                        + "<input class='input_cursor_id' value='"+each["id"]+"'>"
+                        + "</input>"
+                    );
+                }
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,63 +1,48 @@
 package com.thc.sprbasic2025summer.dto;
 
-import com.thc.sprbasic2025summer.domain.Post;
+import com.thc.sprbasic2025summer.domain.Chatuser;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
+public class ChatuserDto {
 
-public class PostDto {
 
     /**/
 
     @Setter @Getter @Builder
     public static class CreateReqDto {
+        Long chatId;
         Long userId;
-        String title;
-        String content;
-        String img;
 
-        List<String> imgs;
-
-        public Post toEntity(){
-            return Post.of(getUserId(), getTitle(), getContent(), getImg());
+        public Chatuser toEntity(){
+            return Chatuser.of(getChatId(), getUserId());
         }
     }
 
     @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
     public static class UpdateReqDto extends DefaultDto.UpdateReqDto {
-        String title;
-        String content;
-        String img;
+        Long chatId;
     }
 
     @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
     public static class DetailResDto extends DefaultDto.DetailResDto {
+        Long chatId;
         Long userId;
-        String title;
-        String content;
-        String img;
-        Integer countlike;
-
-        List<PostimgDto.DetailResDto> imgs;
-
-        String userUsername;
-        String userName;
     }
 
     @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
     public static class ListReqDto extends DefaultDto.ListReqDto {
+        Long chatId;
         Long userId;
-        String title;
     }
     @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
     public static class PagedListReqDto extends DefaultDto.PagedListReqDto {
+        Long chatId;
         Long userId;
-        String title;
     }
     @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
     public static class ScrollListReqDto extends DefaultDto.ScrollListReqDto {
+        Long chatId;
         Long userId;
-        String title;
     }
 }

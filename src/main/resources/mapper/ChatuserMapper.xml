@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thc.sprbasic2025summer.mapper.ChatuserMapper">
+
+	<!---->
+	<select id="detail" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.ChatuserDto$DetailResDto">
+		SELECT chatuser.id
+			, chatuser.deleted
+		 	, chatuser.created_at as createdAt
+		 	, chatuser.modified_at as modifiedAt
+
+		    , chatuser.chat_id as chatId
+			, chatuser.user_id as userId
+		FROM chatuser
+		WHERE chatuser.id = #{id}
+	</select>
+
+	<sql id="commonWhere">
+		WHERE chatuser.id is not NULL
+		<if test = "deleted != null">AND chatuser.deleted = #{deleted}</if>
+		<if test = "chatId != null and chatId !=''">AND chatuser.chat_id = #{chatId}</if>
+		<if test = "userId != null and userId !=''">AND chatuser.user_id = #{userId}</if>
+	</sql>
+
+	<select id="list" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.ChatuserDto$DetailResDto">
+		SELECT chatuser.id
+		FROM chatuser
+		<include refid="commonWhere"/>
+	</select>
+
+
+	<select id="pagedList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.ChatuserDto$DetailResDto">
+		SELECT chatuser.id
+		FROM chatuser
+		<include refid="commonWhere"/>
+		ORDER BY
+		<if test = "orderby != null and orderby =='id'">chatuser.id</if>
+		<if test = "orderby != null and orderby =='title'">chatuser.title</if>
+		<if test = "orderway != null and orderway =='desc'"> DESC</if>
+		<if test = "orderway != null and orderway =='asc'"> ASC</if>
+		LIMIT #{offset}, #{perpage}
+	</select>
+	<select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+		SELECT count(chatuser.id) as listsize
+		FROM chatuser
+		<include refid="commonWhere"/>
+	</select>
+
+	<select id="scrollList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.ChatuserDto$DetailResDto">
+		SELECT chatuser.id
+		FROM chatuser
+		<include refid="commonWhere"/>
+
+		<if test = "orderway != null and orderway =='desc'">
+			<if test = "cursor != null and cursor !=''">AND #{cursor} > chatuser.id </if>
+			ORDER BY chatuser.id DESC
+		</if>
+		<if test = "orderway != null and orderway =='asc'">
+			<if test = "cursor != null and cursor !=''">AND chatuser.id > #{cursor}</if>
+			ORDER BY chatuser.id ASC
+		</if>
+		LIMIT 0, #{perpage}
+	</select>
+</mapper>

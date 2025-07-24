@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thc.sprbasic2025summer.mapper.ChattalkMapper">
+
+	<!---->
+	<select id="detail" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.ChattalkDto$DetailResDto">
+		SELECT chattalk.id
+			, chattalk.deleted
+		 	, chattalk.created_at as createdAt
+		 	, chattalk.modified_at as modifiedAt
+
+		    , chattalk.chatuser_id as chatuserId
+		    , chattalk.content
+
+			, chatuser.chat_id as chatId
+			, chatuser.user_id as userId
+			, user.name as userName
+
+
+		FROM chattalk, chatuser, user
+		WHERE chattalk.id = #{id}
+		  AND chattalk.chatuser_id = chatuser.id
+		  AND chatuser.user_id = user.id
+	</select>
+
+	<sql id="commonWhere">
+		FROM chattalk, chatuser, chat
+		WHERE chattalk.id is not NULL
+		AND chattalk.chatuser_id = chatuser.id
+		AND chatuser.chat_id = chat.id
+		<if test = "deleted != null">AND chattalk.deleted = #{deleted}</if>
+		<if test = "chatuserId != null and chatuserId !=''">AND chatuser.chatuser_id = #{chatuserId}</if>
+		<if test = "chatId != null and chatId !=''">AND chat.id = #{chatId}</if>
+		<if test = "userId != null and userId !=''">AND chatuser.user_id = #{userId}</if>
+	</sql>
+
+	<select id="list" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.ChattalkDto$DetailResDto">
+		SELECT chattalk.id
+		<include refid="commonWhere"/>
+	</select>
+
+
+	<select id="pagedList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.ChattalkDto$DetailResDto">
+		SELECT chattalk.id
+		<include refid="commonWhere"/>
+		ORDER BY
+		<if test = "orderby != null and orderby =='id'">chattalk.id</if>
+		<if test = "orderby != null and orderby =='title'">chattalk.title</if>
+		<if test = "orderway != null and orderway =='desc'"> DESC</if>
+		<if test = "orderway != null and orderway =='asc'"> ASC</if>
+		LIMIT #{offset}, #{perpage}
+	</select>
+	<select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+		SELECT count(chattalk.id) as listsize
+		<include refid="commonWhere"/>
+	</select>
+
+	<select id="scrollList" parameterType="hashMap" resultType="com.thc.sprbasic2025summer.dto.ChattalkDto$DetailResDto">
+		SELECT chattalk.id
+		<include refid="commonWhere"/>
+
+		<if test = "orderway != null and orderway =='desc'">
+			<if test = "cursor != null and cursor !=''">AND #{cursor} > chattalk.id </if>
+			ORDER BY chattalk.id DESC
+		</if>
+		<if test = "orderway != null and orderway =='asc'">
+			<if test = "cursor != null and cursor !=''">AND chattalk.id > #{cursor}</if>
+			ORDER BY chattalk.id ASC
+		</if>
+		LIMIT 0, #{perpage}
+	</select>
+</mapper>

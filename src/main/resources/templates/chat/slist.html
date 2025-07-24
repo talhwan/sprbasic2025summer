@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatuser List</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+scroll list <br/>
+deleted : <input type="checkbox" id="input_deleted" onchange="listener_changed()"/>
+title : <input type="text" id="input_title" onchange="listener_changed()"/>
+perpage : <input type="number" id="input_perpage" onchange="listener_changed()"/>
+orderway :
+<select id="input_orderway" onchange="listener_changed()">
+    <option value="desc">역방향</option>
+    <option value="asc">정방향</option>
+</select>
+<button onclick="list_chatuser()">더보기</button>
+<button onclick="location.href='/chat/create'">생성하기</button>
+
+<div id="div_list">
+</div>
+
+<script>
+    $(function(){
+        //list_chatuser();
+    });
+    function listener_changed(){
+        $("#div_list").html("");
+        list_chatuser();
+    }
+    function listener_detail(obj_id){
+        location.href = "/chat/udetail/" + obj_id;
+    }
+    function list_chatuser(){
+        let cursor = null;
+        let input_cursor_id = $(".input_cursor_id");
+        if(input_cursor_id.length > 0){
+            cursor = $(input_cursor_id[input_cursor_id.length - 1]).val();
+        }
+
+        let userId = localStorage.getItem("userId");
+
+        $.ajax({
+            url: '/api/chatuser/scrollList',
+            method: 'GET',
+            data : {
+                deleted : $("#input_deleted").prop("checked")
+                , cursor : cursor
+                , perpage : $("#input_perpage").val()
+                , orderway : $("#input_orderway").val()
+
+                , userId : userId
+                , title : $("#input_title").val()
+            },
+            success: function (data, status, xhr) {
+                //alert("data : " + JSON.stringify(data));
+                let tempList = data;
+                for(let each of tempList){
+                    $("#div_list").append(
+                        "<div onclick='listener_detail("+each["id"] +")'>" +
+                        + each["id"] + "__" + each["chatId"]+ "__" + each["userId"]
+                        + "<input class='input_cursor_id' value='"+each["id"]+"'>"
+                        + "</input>"
+                    );
+                }
+            },
+            error: function (data, status, err) {
+            },
+            complete: function () {
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

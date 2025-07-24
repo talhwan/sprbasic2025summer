@@ -14,6 +14,7 @@ public class Post extends AuditingField{
     @Column(nullable = false) String title;
     @Column(length = 4000) String content;
     String img;
+    Integer countlike;
 
     protected Post() {}
     private Post(Long userId, String title, String content, String img) {
@@ -21,6 +22,7 @@ public class Post extends AuditingField{
         this.title = title;
         this.content = content;
         this.img = img;
+        this.countlike = 0;
     }
 
     public static Post of(Long userId, String title, String content, String img) {
